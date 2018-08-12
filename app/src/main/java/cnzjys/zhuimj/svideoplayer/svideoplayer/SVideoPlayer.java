@@ -28,17 +28,13 @@ import java.io.IOException;
 import cnzjys.zhuimj.svideoplayer.R;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
-public class SVideoPlayer extends FrameLayout implements ISVideoPlayer, View.OnTouchListener{
+public class SVideoPlayer extends FrameLayout implements ISVideoPlayer{
     private Context mContext;
     private FrameLayout mContainer;
     private TextureView mTextureView;
     private SurfaceTexture mSurfaceTexture;
     private IjkMediaPlayer mIjkPlayer;
     private SVideoPlayerController mController;
-    private long clickTime = 0;
-    private static final int DOUBLE_CLICK_TIME = 3000;
-    private long[] mHits = new long[3];
-    private GestureDetector mGestureDetector;
     private static final String TAG = "FQFQFQ";
 
     public SVideoPlayer(@NonNull Context context) {
@@ -68,11 +64,9 @@ public class SVideoPlayer extends FrameLayout implements ISVideoPlayer, View.OnT
         mController = new SVideoPlayerController(mContext);
         mController.setVideoPlayer(this);
 
-        mGestureDetector = new GestureDetector(getContext(),new MGestureListener());
-
         initTextureView();
         initIjkPlayer();
-        setOnTouchListener(this);
+
     }
 
     private void initIjkPlayer(){
@@ -149,34 +143,12 @@ public class SVideoPlayer extends FrameLayout implements ISVideoPlayer, View.OnT
         mIjkPlayer.release();
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        return mGestureDetector.onTouchEvent(event);
+    public boolean isPlaying(){
+        return mIjkPlayer.isPlaying();
     }
 
 
-    private class MGestureListener extends GestureDetector.SimpleOnGestureListener {
 
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
 
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            if (mIjkPlayer.isPlaying())
-                mIjkPlayer.pause();
-            else
-                mIjkPlayer.start();
-            return true;
-        }
-
-        @Override
-        public boolean onDoubleTap(MotionEvent e) {
-            Toast.makeText(getContext().getApplicationContext(), "点赞了", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-    }
 
 }

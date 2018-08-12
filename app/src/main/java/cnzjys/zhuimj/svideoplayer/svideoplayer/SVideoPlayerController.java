@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,14 +16,14 @@ import android.widget.Toast;
 
 import cnzjys.zhuimj.svideoplayer.R;
 
-public class SVideoPlayerController extends FrameLayout{
+public class SVideoPlayerController extends FrameLayout implements View.OnTouchListener{
 
 
     private View mView;
     private Button pauseBtn;
     private ISVideoPlayer mISVideoPlayer;
     private SVideoPlayer mVideoPlayer;
-
+    private GestureDetector mGestureDetector;
 
     public SVideoPlayerController(@NonNull Context context) {
         super(context);
@@ -40,6 +41,9 @@ public class SVideoPlayerController extends FrameLayout{
                 mVideoPlayer.pause();
             }
         });
+
+        mGestureDetector = new GestureDetector(getContext(), new MGestureListener());
+        setOnTouchListener(this);
     }
 
 
@@ -48,5 +52,32 @@ public class SVideoPlayerController extends FrameLayout{
     }
 
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return mGestureDetector.onTouchEvent(event);
+    }
 
+    private class MGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if (mVideoPlayer.isPlaying())
+                mVideoPlayer.pause();
+            else
+                mVideoPlayer.start();
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            Toast.makeText(getContext().getApplicationContext(), "点赞了", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+    }
 }
